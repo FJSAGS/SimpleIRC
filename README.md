@@ -4,21 +4,23 @@ Simple IRC is a Fabric mod that allows you to connect to an IRC server in Minecr
 
 ## Usage
 
-- You can interact with an IRC server using game commands (use "@help" for a list of commands).
-- You can save IRC connection info through the config system using either the "modmenu" mod, or a keybind (default: "J").
+- You can interact with an IRC server using game commands (use "/simpleirc help" for a list of commands).
+- You can save IRC connection info through the config system using the "modmenu" mod.
 - You can toggle your IRC connection with a keybind (default: "K").
 
-To connect to the server saved in the configuration file, type the "@connect" command without any additional parameters.
+To connect to the server saved in the configuration file, type the "/simpleirc connect" command without any additional parameters.
 
-### Tested on Pissnet (UnrealIRCd, no services).
+### Tested on Pissnet (UnrealIRCd, no services) and UnrealIRCd with services.
 
 ## Notes
 
-If you can't connect to your IRC channel, make sure no one has already joined with your Minecraft name on the IRC side. If this happened, use "@raw NICK <newnick>" and "@join &lt;channel&gt;".
+If you can't connect to your IRC channel, make sure no one has already joined with your Minecraft name on the IRC side. If this happened, use "/simpleirc raw NICK <newnick>" and "/simpleirc join &lt;channel&gt;".
 - This will also happen if you have a Minecraft name that starts with a number, you will NOT be able to connect with your Minecraft name. The technical reason is IRC reserves those for server IDs.
 
-If you enabled autoconnect, it'll connect in 10 seconds after entering a world.
+If you enabled autoconnect, it'll connect in 5 seconds after entering a world.
 
 ## Attribution
 
-This mod is a fork of [JustIRC](https://github.com/8bitFra/JustIRC). I made this because I was personally annoyed with how little features it had - namely default chat setting. (Just like the original author, this is my first modding experience.)
+This mod is a fork of [SimpleIRC by BasedUser](https://github.com/BasedUser/SimpleIRC) which is a fork of [JustIRC](https://github.com/8bitFra/JustIRC).
+This fork only exists because BasedUser didn't add me as a contributor.
+The trinity continues in this mod also being my first modding experience or any experience in java.
