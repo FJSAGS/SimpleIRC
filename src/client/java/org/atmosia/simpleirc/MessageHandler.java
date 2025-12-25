@@ -78,7 +78,7 @@ public class MessageHandler {
             // Source = FJs
             // Command = NICK
             // Content = :FJSAGS_
-            if (MainClient.irc.nickname().equals(channel.substring(1))) {
+            if (MainClient.irc.nickname().equals(source)) {
                 MainClient.irc.SetDisplayNickname(channel.replaceFirst(":", ""));
 
             }
