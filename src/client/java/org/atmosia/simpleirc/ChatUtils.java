@@ -59,7 +59,7 @@ public enum ChatUtils{
         message(parsedMsg);
     }
     public static void Notify(String message) {
-        Component parsedMsg = mm.deserialize("<blue>[INFO] " + message + "</blue>");
+        Component parsedMsg = mm.deserialize("<blue><bold>[INFO] " + message + "</bold></blue>");
         message(parsedMsg);
 
     }

@@ -144,7 +144,12 @@ public class IRCNetwork {
         }
         try {
             if (line.contains("PART")) {
-                Channels.remove(GetChannel(line.split(" ")[1]));
+                String partedChannel = line.split(" ")[1];
+                Channels.remove(GetChannel(partedChannel));
+                if (PrimaryChannel.equals(partedChannel)) {
+                    PrimaryChannel = Channels.getFirst().Name;
+                    ChatUtils.Notify("Since you parted from channel <gray>" + partedChannel + "</gray>, the new primary channel is now <gray>" + PrimaryChannel + "</gray>.");
+                }
             }
             Writer.write(line + "\r\n");
             Writer.flush();

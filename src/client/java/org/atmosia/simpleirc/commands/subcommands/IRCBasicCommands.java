@@ -17,7 +17,7 @@ public class IRCBasicCommands {
         command.then(ClientCommandManager.literal("join")
                 .then(argument("[channel] [password (optional)]", StringArgumentType.greedyString()).executes(IRCBasicCommands::Join)))
                 .then(ClientCommandManager.literal("part")
-                        .then(argument("channel", StringArgumentType.string())
+                        .then(argument("channel", StringArgumentType.greedyString())
                                 .suggests(new ConnectedChannelsSuggester())
                                 .executes(IRCBasicCommands::Part)))
                 .then(ClientCommandManager.literal("raw")
