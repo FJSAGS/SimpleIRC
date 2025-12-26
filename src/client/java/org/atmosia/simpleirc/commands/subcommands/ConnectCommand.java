@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.atmosia.simpleirc.ChatUtils;
 import org.atmosia.simpleirc.Main;
 import org.atmosia.simpleirc.MainClient;
-import org.atmosia.simpleirc.IRCNetwork;
+import org.atmosia.simpleirc.irc.IRCNetwork;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 

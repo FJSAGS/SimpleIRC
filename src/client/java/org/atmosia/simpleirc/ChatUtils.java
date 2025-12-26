@@ -4,6 +4,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.minecraft.client.MinecraftClient;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.atmosia.simpleirc.irc.IRCMessageHandler;
 
 public enum ChatUtils{
 	; // <-- WHAT THE FUCK?????
@@ -40,7 +41,7 @@ public enum ChatUtils{
         message(parsedMsg);
     }
     public static void Warn(String message) {
-        Component parsedMsg = mm.deserialize("<yellow>[WARN] " + message + "</yellow>");
+        Component parsedMsg = mm.deserialize("<#FFA500>[WARN] " + message + "</#FFA500>");
         message(parsedMsg);
     }
     public static void RawOut(String message) {
@@ -49,7 +50,7 @@ public enum ChatUtils{
         message(parsedMsg);
     }
     public static void RawIn(String message) {
-        if (MainClient.irc.Verbosity != IrcVerbosity.RAW) return;
+        if (MainClient.irc.Verbosity != IrcVerbosity.RAW && MainClient.irc.Verbosity != IrcVerbosity.DEBUG) return;
         Component parsedMsg = mm.deserialize("<dark_gray>[RAW <=]</dark_gray> <gray>" + message + "</gray>");
         message(parsedMsg);
     }
@@ -80,7 +81,7 @@ public enum ChatUtils{
             // Target:
             // &9[Channel]&r | &6[NOTICE]&r <&[Source]&r> [Contents]
             Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <gold>[NOTICE]</gold> | <<red>"
-                    + MessageHandler.GetFormattedUser(source, channel) + "</red>> " + content);
+                    + IRCMessageHandler.GetFormattedUser(source, channel) + "</red>> " + content);
             message(parsedMsg);
         }
         public static void Message(String source, String channel, String content) {
@@ -88,7 +89,7 @@ public enum ChatUtils{
             // §9#ss15§r | <§cFJSAGS_Web§r> i need this for testing and understanding of IRC protocol...
             if (channel.startsWith("#")) {
                 Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <<red>"
-                        + MessageHandler.GetFormattedUser(source, channel) + "</red>> " + content);
+                        + IRCMessageHandler.GetFormattedUser(source, channel) + "</red>> " + content);
                 message(parsedMsg);
             }
             else {
@@ -102,15 +103,15 @@ public enum ChatUtils{
         }
         public static void TopicSetBy(String channel, String content) {
             Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <gold>Topic set by</gold>: "
-                    + MessageHandler.GetFormattedUser(content, channel));
+                    + IRCMessageHandler.GetFormattedUser(content, channel));
             message(parsedMsg);
         }
         public static void Join(String source, String channel) {
-            Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <green>+</green> " + MessageHandler.GetFormattedUser(source, channel));
+            Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <green>+</green> " + IRCMessageHandler.GetFormattedUser(source, channel));
             message(parsedMsg);
         }
         public static void Part(String source, String channel, String reason) {
-            Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <red>-</red> " + MessageHandler.GetFormattedUser(source, channel));
+            Component parsedMsg = mm.deserialize("<blue>" + channel + "</blue> | <red>-</red> " + IRCMessageHandler.GetFormattedUser(source, channel));
             message(parsedMsg);
         }
         public static void Quit(String person, String content) {

@@ -1,13 +1,16 @@
-package org.atmosia.simpleirc;
+package org.atmosia.simpleirc.irc;
 
-import net.kyori.adventure.text.event.ClickEvent;
+import org.atmosia.simpleirc.ChatUtils;
+import org.atmosia.simpleirc.IrcVerbosity;
+import org.atmosia.simpleirc.Main;
+import org.atmosia.simpleirc.MainClient;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,11 +25,11 @@ public class IRCNetwork {
     private List<IRCChannel> Channels;
     private String PrimaryChannel;
     private boolean IsConnected;
-    private SSLSocket Socket;
+    private Socket Socket;
     private BufferedReader Reader;
     private BufferedWriter Writer;
-    private final AtomicBoolean initialConnectionFinished;
-    private final AtomicBoolean registeredSasl;
+    private AtomicBoolean initialConnectionFinished;
+    private AtomicBoolean registeredSasl;
     public Boolean IsAway;
     public IRCNetwork(String ip, Integer port, String nickname, String backupNickname, IrcVerbosity verbosity) {
         Ip = ip;
@@ -50,10 +53,17 @@ public class IRCNetwork {
             {
 
                 VerifyFields(callbackInfo);
-                if (callbackInfo.isCancelled()) return;
+                if (callbackInfo.isCancelled()) {
+                    Cleanup();
+                    return;
+
+                }
                 ChatUtils.Debug("Verified fields for connection");
-                OpenSocket(callbackInfo);
-                if (callbackInfo.isCancelled()) return;
+                OpenSocket(callbackInfo, false);
+                if (callbackInfo.isCancelled()) {
+                    Cleanup();
+                    return;
+                }
                 ChatUtils.Debug("Opened socket for connection");
                 Listener();
                 ChatUtils.Debug("Started listener");
@@ -105,7 +115,7 @@ public class IRCNetwork {
                 String line;
                 while ((line = Reader.readLine()) != null) {
                     System.out.println(line);
-                    if (Verbosity == IrcVerbosity.RAW) {
+                    if (Verbosity == IrcVerbosity.RAW || Verbosity == IrcVerbosity.DEBUG) {
                         ChatUtils.RawIn(line);
                     }
                     HandleInput(line);
@@ -125,7 +135,10 @@ public class IRCNetwork {
 
     public void SendLine(String line) {
         if (Writer == null)
+        {
+            Cleanup();
             throw new IllegalStateException("Writer is not connected to a server. Are you connected?");
+        }
         if (Verbosity == IrcVerbosity.RAW) {
             ChatUtils.RawOut(line);
         }
@@ -141,49 +154,74 @@ public class IRCNetwork {
 
 
     }
-    private void OpenSocket(CallbackInfo callbackInfo) {
+    private void OpenSocket(CallbackInfo callbackInfo, boolean notSsl) {
         try {
-            ChatUtils.Debug("Creating socket factory...");
-            SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
-            ChatUtils.Debug("Creating socket...");
-            Socket = (SSLSocket) factory.createSocket(Ip, Port);
-            ChatUtils.Debug("Setting protocols...");
-            Socket.setEnabledProtocols(new String[] {"TLSv1.2", "TLSv1.3"});
-            // Socket.setSoTimeout(5000); breaks everything...
-            ChatUtils.Debug("Starting handshake... <dark_green>// Usually this is the point it gets stuck</dark_green>");
-            Socket.startHandshake();
-            ChatUtils.Debug("Getting writer...");
-            Writer = new BufferedWriter(new OutputStreamWriter(Socket.getOutputStream()));
-            ChatUtils.Debug("And reader...");
-            Reader = new BufferedReader(new InputStreamReader(Socket.getInputStream()));
+            if (!notSsl) {
+                ChatUtils.Debug("Creating socket factory...");
+                SSLSocketFactory factory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+                ChatUtils.Debug("Creating socket...");
+                var socket = (SSLSocket) factory.createSocket(Ip, Port);
+                ChatUtils.Debug("Setting protocols...");
+                socket.setEnabledProtocols(new String[] {"TLSv1.2", "TLSv1.3"});
+                // Socket.setSoTimeout(5000); breaks everything...
+                ChatUtils.Debug("Starting handshake... <dark_green>// Usually this is the point it gets stuck</dark_green>");
+                socket.startHandshake();
+                ChatUtils.Debug("Getting writer...");
+                Writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                ChatUtils.Debug("And reader...");
+                Reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                Socket = socket;
+            }
+            else {
+                ChatUtils.Debug("Creating socket...");
+                var socket = new Socket(Ip, Port);
+                ChatUtils.Debug("Getting writer...");
+                Writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                ChatUtils.Debug("And reader...");
+                Reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                Socket = socket;
+            }
+
             ChatUtils.Debug("Done, lets proceed");
             ChatUtils.Info("Connected to server <blue>" + Ip + "</blue>");
 
         }
-        catch (IOException e) {
-            callbackInfo.cancel();
+        catch (Exception e) {
+            if (Main.settings.forceSsl()) {
+                callbackInfo.cancel();
 //          ChatUtils.Exception(new Exception("An exception happened while connecting to the server:\n" + e.getMessage()));
-            ChatUtils.Error("An exception happened while connecting to the server: " + e.getMessage() + "\n Usually this happens if ip or port are incorrect.");
+                ChatUtils.Error("An exception happened while connecting to the server: " + e.getMessage() + "\n Usually this happens if ip or port are incorrect.");
+            }
+            if (!Main.settings.forceSsl() && !notSsl) {
+                ChatUtils.Warn("Failed to connect using ssl. Since forceSsl is false, trying without ssl.");
+                OpenSocket(callbackInfo, true);
+            }
         }
     }
 
     private void VerifyFields(CallbackInfo callbackInfo) throws IllegalStateException {
         if (Ip.isEmpty() || Port < 1) {
-            throw new IllegalStateException("Ip or Port stated are certainly invalid. Please check them before connecting again.");
+            ChatUtils.Error("Ip or Port stated are certainly invalid. Please check them before connecting again.");
+            callbackInfo.cancel();
         }
         if (Nickname.isEmpty()) {
-            if (BackupNickname.isEmpty())
-                throw new IllegalStateException(
-                            "Both nickname and backup nickname are empty. Idk how would you get" +
-                            "your nickname empty, but consider changing it.");
+            if (BackupNickname.isEmpty()){
+                ChatUtils.Error(
+                        "Both nickname and backup nickname are empty. Idk how would you get" +
+                                "your nickname empty, but consider changing it.");
+                callbackInfo.cancel();
+            }
+
             Nickname = BackupNickname;
         }
         if (Character.isDigit(Nickname.charAt(0))) {
             if (Character.isDigit(BackupNickname.charAt(0))) {
-                throw new IllegalStateException(
-                            "Both nickname and backup nickname start with digits. " +
-                            "These are reserved for server purposes and cannot be used." +
-                            "Please change either of them and try again");
+                ChatUtils.Error(
+                        "Both nickname and backup nickname start with digits. " +
+                                "These are reserved for server purposes and cannot be used." +
+                                "Please change either of them and try again"
+                );
+                callbackInfo.cancel();
             }
             Nickname = BackupNickname;
         }
@@ -204,7 +242,7 @@ public class IRCNetwork {
                 initialConnectionFinished.notify();
             }
         }
-        MessageHandler.HandleMessage(input);
+        IRCMessageHandler.HandleMessage(input);
     }
 
     private void Pong(String input) {
@@ -254,10 +292,7 @@ public class IRCNetwork {
             target = PrimaryChannel;
         SendLine("PRIVMSG " + target + " :" + message);
     }
-    public void setPrimaryChannel(String channel) {
-        if (Channels.stream().noneMatch(x -> Objects.equals(x.Name, channel))) throw new IllegalArgumentException("You are not connected to this channel.");
-        PrimaryChannel = channel;
-    }
+
     public void SetPrimaryChannel(String channel) {
         if (Channels.stream().noneMatch(x -> Objects.equals(x.Name, channel))) {
             throw new RuntimeException("You aren't connected to channel " + channel);
@@ -278,7 +313,8 @@ public class IRCNetwork {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ChatUtils.Notify("Disconnected from server");
+        Cleanup();
+        ChatUtils.Notify("Disconnected from server.");
     }
     public void SetVerbosity(IrcVerbosity verbosity) {
         Verbosity = verbosity;
@@ -310,5 +346,16 @@ public class IRCNetwork {
     public void UseBackupNickname() {
         SendLine("NICK " + BackupNickname);
         UseBackupNickname = true;
+    }
+    private void Cleanup() {
+        ChatUtils.Notify("Cleaning up...");
+        Socket = null;
+        IsConnected = false;
+        Writer = null;
+        Reader = null;
+        Channels = new ArrayList<>();
+        initialConnectionFinished = new AtomicBoolean(false);
+        registeredSasl = new AtomicBoolean(false);
+
     }
 }

@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.atmosia.simpleirc.ChatUtils;
 import org.atmosia.simpleirc.MainClient;
-import org.atmosia.simpleirc.IRCChannel;
+import org.atmosia.simpleirc.irc.IRCChannel;
 import org.atmosia.simpleirc.commands.suggestions.ConnectedChannelsSuggester;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;

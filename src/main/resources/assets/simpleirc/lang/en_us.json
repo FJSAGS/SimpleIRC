@@ -5,6 +5,7 @@
   "text.config.simple-irc.option.autoconnect": "Autoconnection",
   "text.config.simple-irc.option.verbosity": "Verbosity",
   "text.config.simple-irc.option.postConnectionCommands": "Post-Connection commands",
+  "text.config.simple-irc.option.forceSsl": "Force SSL connection",
   "text.config.simple-irc.option.verbosity.value.verbose": "VERBOSE",
   "text.config.simple-irc.option.verbosity.value.normal": "NORMAL",
   "text.config.simple-irc.option.verbosity.value.quiet": "QUIET",

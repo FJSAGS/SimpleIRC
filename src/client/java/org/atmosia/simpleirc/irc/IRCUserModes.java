@@ -1,4 +1,4 @@
-package org.atmosia.simpleirc;
+package org.atmosia.simpleirc.irc;
 
 public enum IRCUserModes {
     OWNER,

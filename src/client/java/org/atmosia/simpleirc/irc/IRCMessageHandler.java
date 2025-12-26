@@ -1,12 +1,13 @@
-package org.atmosia.simpleirc;
+package org.atmosia.simpleirc.irc;
 
-import net.minecraft.stat.Stat;
+import org.atmosia.simpleirc.ChatUtils;
+import org.atmosia.simpleirc.MainClient;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageHandler {
+public class IRCMessageHandler {
     public static Map<String, HashMap<String, IRCUserModes>> StatusPrefixes = new HashMap<>();
     private static Boolean RefreshNamesFlag = false;
     public static void HandleMessage(String message) {
