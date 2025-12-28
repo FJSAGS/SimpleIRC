@@ -27,6 +27,10 @@ public class ConnectCommand {
     private static int ConnectWithArgs(CommandContext<FabricClientCommandSource> ctx) {
         var server = ctx.getArgument("server_ip", String.class);
         var serverPort = ctx.getArgument("server_port", Integer.class);
+        if (MainClient.irc != null && MainClient.irc.isConnected()) {
+            MainClient.irc.Disconnect("Reconnecting...");
+        }
+
         MainClient.irc = new IRCNetwork(server, serverPort, ChatUtils.getUsername(), Main.settings.backupnick(), Main.settings.verbosity());
         MainClient.irc.Connect();
         return 0;
@@ -34,6 +38,9 @@ public class ConnectCommand {
 
 
     private static int Connect(CommandContext<FabricClientCommandSource> ctx) {
+        if (MainClient.irc != null && MainClient.irc.isConnected()) {
+            MainClient.irc.Disconnect("Reconnecting...");
+        }
         try {
             MainClient.Connect();
         }

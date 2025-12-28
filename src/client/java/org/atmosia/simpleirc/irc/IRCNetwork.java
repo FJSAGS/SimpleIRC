@@ -1,9 +1,6 @@
 package org.atmosia.simpleirc.irc;
 
-import org.atmosia.simpleirc.ChatUtils;
-import org.atmosia.simpleirc.IrcVerbosity;
-import org.atmosia.simpleirc.Main;
-import org.atmosia.simpleirc.MainClient;
+import org.atmosia.simpleirc.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.net.ssl.SSLSocket;
@@ -256,12 +253,6 @@ public class IRCNetwork {
             payload = payload.substring(1);
         }
         SendLine("PONG :" + payload);
-
-    }
-    public void close() {
-        try {Socket.close();} catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
     public boolean isConnected() {

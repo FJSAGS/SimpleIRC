@@ -23,18 +23,28 @@ public class MainClient implements ClientModInitializer {
     	    GLFW.GLFW_KEY_K, // keycode
     	    "category.simpleirc.main" // category key
     	));
-	
-	
 	@Override
 	public void onInitializeClient() {
 		/*if (FabricLoader.getInstance().isModLoaded("cloth-config2")) 
         {
            ConfigScreenBuilder.setMain(Main.MOD_ID, new ClothConfigScreenBuilder());
         }*/
-        
-    	
-              
-        
+
+        Main.settings.subscribeToBackupnick((value) -> {
+            irc.SetBackupNickname(value);
+        });
+        Main.settings.subscribeToIp((value) -> {
+            irc.SetIp(value);
+            ChatUtils.Notify("The IP in config has changed. <click:run_command:/simpleirc connect>Click here if you want to reconnect using new settings</click>");
+        });
+        Main.settings.subscribeToPort((value) -> {
+            irc.SetPort(value);
+            ChatUtils.Notify("The port in config has changed. <click:run_command:/simpleirc connect>Click here if you want to reconnect using new settings</click>");
+        });
+        Main.settings.subscribeToVerbosity((value) -> {
+            irc.SetVerbosity(value);
+        });
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while(KBind.wasPressed())
             {
@@ -49,6 +59,7 @@ public class MainClient implements ClientModInitializer {
             }
         });
         SimpleIrcCommand.Register();
+
 	}
     public static void Connect() {
         MainClient.irc = new IRCNetwork(Main.settings.ip(), Main.settings.port(), ChatUtils.getUsername(),
