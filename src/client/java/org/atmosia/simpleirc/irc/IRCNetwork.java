@@ -111,7 +111,7 @@ public class IRCNetwork {
             try {
                 String line;
                 while ((line = Reader.readLine()) != null) {
-                    System.out.println(line);
+                    // System.out.println(line); // who left this here
                     if (Verbosity == IrcVerbosity.RAW || Verbosity == IrcVerbosity.DEBUG) {
                         ChatUtils.RawIn(line);
                     }
