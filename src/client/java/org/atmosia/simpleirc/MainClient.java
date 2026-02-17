@@ -17,8 +17,7 @@ public class MainClient implements ClientModInitializer {
 	public static IRCNetwork irc = null;
     public static Boolean DefaultToMinecraftChat = false;
     public static Character MinecraftChatPrefix = '!';
-    public static boolean toggled = false;
-    public static KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of("SimpleIrc-AnthonyFork"));
+    public static KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of("SimpleIRC"));
 	
 	private static KeyBinding KBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
     	    "key.simpleirc.toggleconnect", // translation key
@@ -60,10 +59,10 @@ public class MainClient implements ClientModInitializer {
             {
                 if (DefaultToMinecraftChat){
                     DefaultToMinecraftChat = false;
-                    ChatUtils.Notify("default chat is now irc");
+                    ChatUtils.Notify("Default chat is now irc");
                 }else{
                     DefaultToMinecraftChat = true;
-                    ChatUtils.Notify("default chat is now mimecraft chat");
+                    ChatUtils.Notify("Default chat is now minecraft chat");
                 }
             }
 

@@ -17,7 +17,7 @@ public enum ChatUtils{
 	{
 		Audience player = MCInstance.player;
         try {
-            player.sendMessage(message);
+            MinecraftClient.getInstance().execute(() ->player.sendMessage(message));
         } catch (Exception e) {
             Main.LOGGER.warn("Exception while displaying message: ", e);
         }

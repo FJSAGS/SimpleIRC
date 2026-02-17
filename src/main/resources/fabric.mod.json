@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Simple IRC",
-  "description": "A mediocre IRC client for Minecraft. (1.21.11 edition by antiq)",
+  "description": "A mediocre IRC client for Minecraft.",
   "authors": [
     "BasedUser",
     "8bitFra",
