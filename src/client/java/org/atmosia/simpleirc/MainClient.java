@@ -1,5 +1,6 @@
 package org.atmosia.simpleirc;
 
+import net.minecraft.util.Identifier;
 import org.atmosia.simpleirc.commands.SimpleIrcCommand;
 import org.atmosia.simpleirc.irc.IRCNetwork;
 import org.lwjgl.glfw.GLFW;
@@ -16,13 +17,22 @@ public class MainClient implements ClientModInitializer {
 	public static IRCNetwork irc = null;
     public static Boolean DefaultToMinecraftChat = false;
     public static Character MinecraftChatPrefix = '!';
+    public static boolean toggled = false;
+    public static KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of("SimpleIrc-AnthonyFork"));
 	
 	private static KeyBinding KBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
     	    "key.simpleirc.toggleconnect", // translation key
     	    InputUtil.Type.KEYSYM, // type
     	    GLFW.GLFW_KEY_K, // keycode
-    	    "category.simpleirc.main" // category key
+    	    cat // category key
     	));
+
+    private static KeyBinding Ibind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.simpleirc.togglemcchat", // translation key
+            InputUtil.Type.KEYSYM, // type
+            GLFW.GLFW_KEY_I, // keycode
+            cat // category key
+    ));
 	@Override
 	public void onInitializeClient() {
 		/*if (FabricLoader.getInstance().isModLoaded("cloth-config2")) 
@@ -46,6 +56,20 @@ public class MainClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while(Ibind.wasPressed())
+            {
+                if (DefaultToMinecraftChat){
+                    DefaultToMinecraftChat = false;
+                    ChatUtils.Notify("default chat is now irc");
+                }else{
+                    DefaultToMinecraftChat = true;
+                    ChatUtils.Notify("default chat is now mimecraft chat");
+                }
+            }
+
+
+
+
             while(KBind.wasPressed())
             {
             	if(irc==null || !irc.isConnected())

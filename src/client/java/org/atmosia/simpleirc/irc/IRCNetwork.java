@@ -1,5 +1,6 @@
 package org.atmosia.simpleirc.irc;
 
+import net.minecraft.client.MinecraftClient;
 import org.atmosia.simpleirc.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -89,6 +90,8 @@ public class IRCNetwork {
                             Thread.sleep(time);
                         }
                     } catch (NumberFormatException e) {
+                        if (command.startsWith("/simpleirc")) MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().getNetworkHandler().sendChatCommand(command.replace("/simpleirc","simpleirc")));
+
                         SendLine(command);
                     } catch (InterruptedException e) {
                         ChatUtils.Error("Error sending command: Sleep interrupted");

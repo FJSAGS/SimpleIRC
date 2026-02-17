@@ -82,12 +82,13 @@ dependencies {
 	modApi "com.terraformersmc:modmenu:15.0.0"
 	
 	// Replace Tag with the current version you can find at the top of this page
-    modImplementation include("net.kyori:adventure-platform-fabric:6.6.0")
-    modImplementation "net.kyori:adventure-text-minimessage:4.25.0"
+   // modImplementation include("net.kyori:adventure-platform-fabric:6.6.0")
+  //  modImplementation "net.kyori:adventure-text-minimessage:4.25.0"
     modImplementation "io.wispforest:owo-lib:${project.owo_version}"
     include "io.wispforest:owo-sentinel:${project.owo_version}"
     annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
-
+	modImplementation(include("net.kyori:adventure-platform-fabric:6.8.0"))
+	implementation("net.kyori:adventure-text-minimessage:4.26.1")
 
 }
 

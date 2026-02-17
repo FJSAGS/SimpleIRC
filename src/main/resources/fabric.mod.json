@@ -4,10 +4,11 @@
   "version": "${version}",
 
   "name": "Simple IRC",
-  "description": "A mediocre IRC client for Minecraft.",
+  "description": "A mediocre IRC client for Minecraft. (1.21.11 edition by antiq)",
   "authors": [
     "BasedUser",
-    "8bitFra"
+    "8bitFra",
+    "anthony4933"
   ],
   "contact": {
     "homepage": "https://baseduser.eu.org",
@@ -37,12 +38,12 @@
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": "1.21.8",
+    "minecraft": "1.21.11",
     "java": ">=17",
     "owo-lib": ">=0.12.23+1.21.8"
 
   },
   "suggests": {
-	"minecraft": "1.21.8"
+	"minecraft": "1.21.11"
   }
 }

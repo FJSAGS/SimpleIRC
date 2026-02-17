@@ -1,4 +1,5 @@
 {
+  "text.config.simple-irc.option.togglechannel": "toggle defaulting to minecrfracft chat",
   "text.config.simple-irc.option.ip": "Server IP",
   "text.config.simple-irc.option.backupnick": "Backup Nickname",
   "text.config.simple-irc.option.port": "Port",
@@ -10,5 +11,8 @@
   "text.config.simple-irc.option.verbosity.value.normal": "NORMAL",
   "text.config.simple-irc.option.verbosity.value.quiet": "QUIET",
   "text.config.simple-irc.option.verbosity.value.raw": "RAW",
-  "text.config.simple-irc.option.verbosity.value.debug": "DEBUG"
+  "text.config.simple-irc.option.verbosity.value.debug": "DEBUG",
+  "key.simpleirc.togglemcchat": "toggle between minecraft and irc chat",
+  "key.simpleirc.toggleconnect": "connect/disconnect from irc",
+  "text.config.simpleirc.title": "simple irc 1.21.11 edition by anthoni"
 }
