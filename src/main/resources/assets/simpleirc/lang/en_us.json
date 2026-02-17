@@ -12,6 +12,7 @@
   "text.config.simple-irc.option.verbosity.value.quiet": "QUIET",
   "text.config.simple-irc.option.verbosity.value.raw": "RAW",
   "text.config.simple-irc.option.verbosity.value.debug": "DEBUG",
+  "key.category.minecraft.simpleirc": "SimpleIRC",
   "key.simpleirc.togglemcchat": "toggle between minecraft and irc chat",
   "key.simpleirc.toggleconnect": "connect/disconnect from irc",
   "text.config.simple-irc.title": "SimpleIRC v1.2.2",

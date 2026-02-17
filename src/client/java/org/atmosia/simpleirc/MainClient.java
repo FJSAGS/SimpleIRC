@@ -17,7 +17,7 @@ public class MainClient implements ClientModInitializer {
 	public static IRCNetwork irc = null;
     public static Boolean DefaultToMinecraftChat = false;
     public static Character MinecraftChatPrefix = '!';
-    public static KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of("SimpleIRC"));
+    public static KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of("simpleirc"));
 	
 	private static KeyBinding KBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
     	    "key.simpleirc.toggleconnect", // translation key
