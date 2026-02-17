@@ -14,5 +14,6 @@
   "text.config.simple-irc.option.verbosity.value.debug": "DEBUG",
   "key.simpleirc.togglemcchat": "toggle between minecraft and irc chat",
   "key.simpleirc.toggleconnect": "connect/disconnect from irc",
-  "text.config.simpleirc.title": "simple irc 1.21.11 edition by anthoni"
+  "text.config.simple-irc.title": "SimpleIRC v1.2.2",
+  "text.config.simple-irc.section.connection details": "Connection settings"
 }
