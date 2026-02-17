@@ -23,6 +23,5 @@ public class Config {
     public IrcVerbosity verbosity = IrcVerbosity.NORMAL;
     public List<String> postConnectionCommands = new ArrayList<String>();
 
-    public String togglechannel = "ignore this this is unused sk";
 
 }
