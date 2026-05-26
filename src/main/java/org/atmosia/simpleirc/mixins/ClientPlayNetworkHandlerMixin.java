@@ -1,10 +1,12 @@
-package org.atmosia.simpleirc.mixin.client;
+package org.atmosia.simpleirc.mixins;
 
 import java.util.concurrent.TimeUnit;
 
-import net.minecraft.network.DisconnectionInfo;
+import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
+import net.minecraft.network.DisconnectionDetails;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ClientCommonPacketListener;
 import org.atmosia.simpleirc.ChatUtils;
-import org.atmosia.simpleirc.Main;
 
 import org.atmosia.simpleirc.MainClient;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,29 +14,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.network.ClientCommonNetworkHandler;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.listener.ClientPacketListener;
-
-@Mixin(ClientCommonNetworkHandler.class)
-public abstract class ClientPlayNetworkHandlerMixin implements ClientPacketListener
+@Mixin(ClientCommonPacketListenerImpl.class)
+public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacketListener
 {
 	
 		@Inject(
 			at = @At("HEAD"),
-			method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V",
+			method = "send",
 			cancellable = true
 		)
 		
 		private void onSendPacket(Packet<?> packet, CallbackInfo ci)
 		{
 			//System.out.println(packet);
-			if(Main.autoconnect) this.checkstatus();
+			if(MainClient.autoconnect) this.checkstatus();
 		}
 	
 		private void checkstatus() 
 		{
-			Main.autoconnect = false;
+			MainClient.autoconnect = false;
 			new Thread(() -> 
 			{
 				try {
@@ -43,7 +41,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPacketListe
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if(Main.settings.autoconnect())
+				if(MainClient.settings.autoconnect())
 				{
                     MainClient.Connect();
 				}
@@ -56,10 +54,10 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPacketListe
 		}
         @Inject(
                 at = @At("HEAD"),
-                method = "onDisconnected",
+                method = "onDisconnect",
                 cancellable = false
         )
-    private void onDisconnected(DisconnectionInfo info, CallbackInfo ci)
+    private void onDisconnected(DisconnectionDetails info, CallbackInfo ci)
     {
         if (MainClient.irc == null) return;
         if (!MainClient.irc.isConnected()) return;

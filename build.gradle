@@ -1,7 +1,6 @@
 plugins {
-	id 'fabric-loom' version '1.15-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version "1.16-SNAPSHOT"
 	id 'maven-publish'
-    id 'java'
 }
 
 version = project.mod_version
@@ -44,16 +43,12 @@ repositories {
 }
 
 loom {
-    splitEnvironmentSourceSets()
 
 	mods {
-		"justirc" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
+		"simpleirc" {
+			sourceSet sourceSets.main}
         "fabric-automessage" {
             sourceSet sourceSets.main
-            sourceSet sourceSets.client
         }
 	}
 
@@ -63,11 +58,10 @@ loom {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	// Uncomment the following line to enable the deprecated Fabric API modules.
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
@@ -79,15 +73,15 @@ dependencies {
     //    exclude(group: "net.fabricmc.fabric-api")
     //}
 
-	modApi "com.terraformersmc:modmenu:15.0.0"
-	
+	implementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+
 	// Replace Tag with the current version you can find at the top of this page
    // modImplementation include("net.kyori:adventure-platform-fabric:6.6.0")
   //  modImplementation "net.kyori:adventure-text-minimessage:4.25.0"
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+    implementation "io.wispforest:owo-lib:${project.owo_version}"
     include "io.wispforest:owo-sentinel:${project.owo_version}"
     annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
-	modImplementation(include("net.kyori:adventure-platform-fabric:6.8.0"))
+	implementation(include("net.kyori:adventure-platform-fabric:6.9.0"))
 	implementation("net.kyori:adventure-text-minimessage:4.26.1")
 
 }
@@ -101,7 +95,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
@@ -110,8 +104,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {

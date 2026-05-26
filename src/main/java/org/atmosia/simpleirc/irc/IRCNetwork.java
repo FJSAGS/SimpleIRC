@@ -1,6 +1,6 @@
 package org.atmosia.simpleirc.irc;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.atmosia.simpleirc.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -78,7 +78,7 @@ public class IRCNetwork {
                     ChatUtils.Notify("Done. You should be now connected to IRC.");
                     IsConnected = true;
                 }
-                for (var command : Main.settings.postConnectionCommands()) {
+                for (var command : MainClient.settings.postConnectionCommands()) {
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -90,7 +90,7 @@ public class IRCNetwork {
                             Thread.sleep(time);
                         }
                     } catch (NumberFormatException e) {
-                        if (command.startsWith("/simpleirc")) MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().getNetworkHandler().sendChatCommand(command.replace("/simpleirc","simpleirc")));
+                        if (command.startsWith("/simpleirc")) Minecraft.getInstance().execute(() -> Minecraft.getInstance().player.connection.sendCommand(command.replace("/simpleirc","simpleirc")));
 
                         SendLine(command);
                     } catch (InterruptedException e) {
@@ -139,7 +139,7 @@ public class IRCNetwork {
             Cleanup();
             throw new IllegalStateException("Writer is not connected to a server. Are you connected?");
         }
-        if (Verbosity == IrcVerbosity.RAW) {
+        if (Verbosity == IrcVerbosity.RAW || Verbosity == IrcVerbosity.DEBUG) {
             ChatUtils.RawOut(line);
         }
         try {
@@ -192,12 +192,12 @@ public class IRCNetwork {
 
         }
         catch (Exception e) {
-            if (Main.settings.forceSsl()) {
+            if (MainClient.settings.forceSsl()) {
                 callbackInfo.cancel();
 //          ChatUtils.Exception(new Exception("An exception happened while connecting to the server:\n" + e.getMessage()));
                 ChatUtils.Error("An exception happened while connecting to the server: " + e.getMessage() + "\n Usually this happens if ip or port are incorrect.");
             }
-            if (!Main.settings.forceSsl() && !notSsl) {
+            if (!MainClient.settings.forceSsl() && !notSsl) {
                 ChatUtils.Warn("Failed to connect using ssl. Since forceSsl is false, trying without ssl.");
                 OpenSocket(callbackInfo, true);
             }

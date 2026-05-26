@@ -3,24 +3,24 @@ package org.atmosia.simpleirc.commands.subcommands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.atmosia.simpleirc.ChatUtils;
 import org.atmosia.simpleirc.MainClient;
 import org.atmosia.simpleirc.irc.IRCChannel;
 import org.atmosia.simpleirc.commands.suggestions.ConnectedChannelsSuggester;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 
 public class IRCBasicCommands {
     public static LiteralArgumentBuilder<FabricClientCommandSource> Register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command.then(ClientCommandManager.literal("join")
+        command.then(ClientCommands.literal("join")
                 .then(argument("[channel] [password (optional)]", StringArgumentType.greedyString()).executes(IRCBasicCommands::Join)))
-                .then(ClientCommandManager.literal("part")
+                .then(ClientCommands.literal("part")
                         .then(argument("channel", StringArgumentType.greedyString())
                                 .suggests(new ConnectedChannelsSuggester())
                                 .executes(IRCBasicCommands::Part)))
-                .then(ClientCommandManager.literal("raw")
+                .then(ClientCommands.literal("raw")
                         .then(argument("command", StringArgumentType.greedyString()).executes(IRCBasicCommands::Raw))
                 );
         return command;

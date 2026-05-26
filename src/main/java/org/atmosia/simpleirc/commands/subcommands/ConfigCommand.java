@@ -5,39 +5,38 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.text.Text;
 import org.atmosia.simpleirc.*;
 import org.atmosia.simpleirc.commands.suggestions.VerbositySuggestionProvider;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 
 public class ConfigCommand {
     public static LiteralArgumentBuilder<FabricClientCommandSource> Register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
         command
-                .then(ClientCommandManager.literal("config")
-                        .then(ClientCommandManager.literal("server").executes(ConfigCommand::ShowServer)
+                .then(ClientCommands.literal("config")
+                        .then(ClientCommands.literal("server").executes(ConfigCommand::ShowServer)
                                 .then(argument("value", StringArgumentType.string())
                                         .executes(ctx -> EditConfig(ctx, "server"))
                                 )
                 )
-                        .then(ClientCommandManager.literal("port").executes(ConfigCommand::ShowPort)
+                        .then(ClientCommands.literal("port").executes(ConfigCommand::ShowPort)
                                 .then(argument("int_value", IntegerArgumentType.integer(0, 65535))
                                         .executes(ctx -> EditConfig(ctx, "port"))
                                 )
                 )
-                        .then(ClientCommandManager.literal("backup_nickname")
+                        .then(ClientCommands.literal("backup_nickname")
                                 .then(argument("value", StringArgumentType.string())
                                         .executes(ctx -> EditConfig(ctx, "backup_nickname"))
                                 )
                 )
-                        .then(ClientCommandManager.literal("autoconnect").executes(ConfigCommand::ShowAutoconect)
+                        .then(ClientCommands.literal("autoconnect").executes(ConfigCommand::ShowAutoconect)
                                 .then(argument("bool_value", BoolArgumentType.bool())
                                         .executes(ctx -> EditConfig(ctx, "autoconnect"))
                                 )
                 )
-                        .then(ClientCommandManager.literal("verbosity")
+                        .then(ClientCommands.literal("verbosity")
                                 .then(argument("value", StringArgumentType.string())
                                         .suggests(new VerbositySuggestionProvider())
                                         .executes(ctx -> EditConfig(ctx, "verbosity"))
@@ -50,12 +49,12 @@ public class ConfigCommand {
         switch (option) {
             case "server" -> {
                 var server = context.getArgument("value", String.class);
-                Main.settings.ip(server);
+                MainClient.settings.ip(server);
                 ChatUtils.Notify("Set config option <gray>Server IP</gray> to '<gray>" + server + "</gray>'");
             }
             case "port" -> {
                 var port = context.getArgument("int_value", Integer.class);
-                Main.settings.port(port);
+                MainClient.settings.port(port);
                 ChatUtils.Notify("Set config option <gray>Port</gray> to <gray>" + port + "</gray>");
             }
 //            case "channel" -> {
@@ -70,12 +69,12 @@ public class ConfigCommand {
 //            }
             case "backup_nickname" -> {
                 var backup_nick = context.getArgument("value", String.class);
-                Main.settings.backupnick(backup_nick);
+                MainClient.settings.backupnick(backup_nick);
                 ChatUtils.Notify("Set config option <gray>Backup Nickname</gray> to '<gray>" + backup_nick + "</gray>'");
             }
             case "autoconnect" -> {
                 var autoconnect = context.getArgument("bool_value", Boolean.class);
-                Main.settings.autoconnect(autoconnect);
+                MainClient.settings.autoconnect(autoconnect);
                 ChatUtils.Notify("Set the config option <gray>Auto Connection</gray> to " + (autoconnect ? "<green>True</green>" : "<red>False</red>"));
             }
             case "verbosity" -> {
@@ -88,7 +87,7 @@ public class ConfigCommand {
                     case "quiet" -> IrcVerbosity.QUIET;
                     default -> verbosity;
                 };
-                Main.settings.verbosity(verbosity);
+                MainClient.settings.verbosity(verbosity);
                 ChatUtils.Notify("Set config option <gray>Verbosity</gray> to <gray>" + verbosityString.toUpperCase() + "</gray>");
                 if (MainClient.irc != null) {
                     MainClient.irc.SetVerbosity(verbosity);
@@ -99,11 +98,11 @@ public class ConfigCommand {
         return 0;
     }
     private static int ShowServer(CommandContext<FabricClientCommandSource> ctx) {
-        ChatUtils.Notify("Server IP in config is: <gray>" + Main.settings.ip() + "</gray>");
+        ChatUtils.Notify("Server IP in config is: <gray>" + MainClient.settings.ip() + "</gray>");
         return 1;
     }
     private static int ShowPort(CommandContext<FabricClientCommandSource> ctx) {
-        ChatUtils.Notify("Server port in config is: <gray>" + Main.settings.port() + "</gray>");
+        ChatUtils.Notify("Server port in config is: <gray>" + MainClient.settings.port() + "</gray>");
         return 1;
     }
     private static int ShowChannel(CommandContext<FabricClientCommandSource> ctx) {
@@ -111,7 +110,7 @@ public class ConfigCommand {
         return 1;
     }
     private static int ShowAutoconect(CommandContext<FabricClientCommandSource> ctx) {
-        ChatUtils.Notify("Do I autoconnect?: <gray>" + (Main.settings.autoconnect() ? "<green>Yes</green>" : "<red>No</red>") + "</gray>");
+        ChatUtils.Notify("Do I autoconnect?: <gray>" + (MainClient.settings.autoconnect() ? "<green>Yes</green>" : "<red>No</red>") + "</gray>");
         return 1;
     }
 }

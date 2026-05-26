@@ -18,32 +18,25 @@
   "license": "MIT",
   "icon": "assets/simpleirc/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "org.atmosia.simpleirc.Main"
-    ],
     "client": [
       "org.atmosia.simpleirc.MainClient"
     ]
   },
   "mixins": [
-    "simpleirc.mixins.json",
-    {
-		"config": "simpleirc.client.mixins.json",
-		"environment": "client"
-	}
+    "simpleirc.mixins.json"
   ],
 
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
-    "minecraft": "1.21.11",
-    "java": ">=17",
-    "owo-lib": ">=0.12.23+1.21.8"
+    "minecraft": "26.1.2",
+    "java": ">=25",
+    "owo-lib": ">=0.13.0+26.1"
 
   },
   "suggests": {
-	"minecraft": "1.21.11"
+	"minecraft": "26.1.2"
   }
 }

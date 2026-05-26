@@ -1,34 +1,44 @@
 package org.atmosia.simpleirc;
 
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 import org.atmosia.simpleirc.commands.SimpleIrcCommand;
 import org.atmosia.simpleirc.irc.IRCNetwork;
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.Objects;
 
-public class MainClient implements ClientModInitializer {	
+public class MainClient implements ClientModInitializer {
+
+    public static boolean autoconnect = true;
+
+    public static final String MOD_ID = "simpleirc";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static org.atmosia.simpleirc.SimpleIRCConfig settings = org.atmosia.simpleirc.SimpleIRCConfig.createAndLoad();
+
 	public static IRCNetwork irc = null;
     public static Boolean DefaultToMinecraftChat = false;
     public static Character MinecraftChatPrefix = '!';
-    public static KeyBinding.Category cat = KeyBinding.Category.create(Identifier.of("simpleirc"));
+    public static KeyMapping.Category cat = KeyMapping.Category.register(Identifier.parse("simpleirc"));
 	
-	private static KeyBinding KBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+	private static KeyMapping KBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
     	    "key.simpleirc.toggleconnect", // translation key
-    	    InputUtil.Type.KEYSYM, // type
+    	    InputConstants.Type.KEYSYM, // type
     	    GLFW.GLFW_KEY_K, // keycode
     	    cat // category key
     	));
 
-    private static KeyBinding Ibind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    private static KeyMapping Ibind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.simpleirc.togglemcchat", // translation key
-            InputUtil.Type.KEYSYM, // type
+            InputConstants.Type.KEYSYM, // type
             GLFW.GLFW_KEY_I, // keycode
             cat // category key
     ));
@@ -39,23 +49,23 @@ public class MainClient implements ClientModInitializer {
            ConfigScreenBuilder.setMain(Main.MOD_ID, new ClothConfigScreenBuilder());
         }*/
 
-        Main.settings.subscribeToBackupnick((value) -> {
+        settings.subscribeToBackupnick((value) -> {
             irc.SetBackupNickname(value);
         });
-        Main.settings.subscribeToIp((value) -> {
+        settings.subscribeToIp((value) -> {
             irc.SetIp(value);
             ChatUtils.Notify("The IP in config has changed. <click:run_command:/simpleirc connect>Click here if you want to reconnect using new settings</click>");
         });
-        Main.settings.subscribeToPort((value) -> {
+        settings.subscribeToPort((value) -> {
             irc.SetPort(value);
             ChatUtils.Notify("The port in config has changed. <click:run_command:/simpleirc connect>Click here if you want to reconnect using new settings</click>");
         });
-        Main.settings.subscribeToVerbosity((value) -> {
+        settings.subscribeToVerbosity((value) -> {
             irc.SetVerbosity(value);
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while(Ibind.wasPressed())
+            while(Ibind.consumeClick())
             {
                 if (DefaultToMinecraftChat){
                     DefaultToMinecraftChat = false;
@@ -69,7 +79,7 @@ public class MainClient implements ClientModInitializer {
 
 
 
-            while(KBind.wasPressed())
+            while(KBind.consumeClick())
             {
             	if(irc==null || !irc.isConnected())
             	{
@@ -85,8 +95,8 @@ public class MainClient implements ClientModInitializer {
 
 	}
     public static void Connect() {
-        MainClient.irc = new IRCNetwork(Main.settings.ip(), Main.settings.port(), ChatUtils.getUsername(),
-                Main.settings.backupnick(), Main.settings.verbosity());
+        irc = new IRCNetwork(settings.ip(), settings.port(), ChatUtils.getUsername(),
+                settings.backupnick(), settings.verbosity());
         try {
             MainClient.irc.Connect();
         } catch (IllegalStateException e) {

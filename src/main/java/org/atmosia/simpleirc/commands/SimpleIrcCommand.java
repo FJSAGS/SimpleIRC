@@ -2,13 +2,12 @@ package org.atmosia.simpleirc.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
 import org.atmosia.simpleirc.ChatUtils;
 import org.atmosia.simpleirc.commands.subcommands.*;
 
@@ -17,9 +16,9 @@ public class SimpleIrcCommand {
     public static void Register() {
         ClientCommandRegistrationCallback.EVENT.register(SimpleIrcCommand::RegisterForReal);
     }
-    private static void RegisterForReal(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        var command = ClientCommandManager.literal("simpleirc").executes(SimpleIrcCommand::SendHelp)
-                .then(ClientCommandManager.literal("help").executes(SimpleIrcCommand::SendHelp));
+    private static void RegisterForReal(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
+        var command = ClientCommands.literal("simpleirc").executes(SimpleIrcCommand::SendHelp)
+                .then(ClientCommands.literal("help").executes(SimpleIrcCommand::SendHelp));
         ConfigCommand.Register(command);
         ConnectCommand.Register(command);
         DisconnectCommand.Register(command);

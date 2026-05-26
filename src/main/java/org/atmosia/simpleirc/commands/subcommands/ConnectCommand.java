@@ -4,18 +4,17 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.atmosia.simpleirc.ChatUtils;
-import org.atmosia.simpleirc.Main;
 import org.atmosia.simpleirc.MainClient;
 import org.atmosia.simpleirc.irc.IRCNetwork;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 
 public class ConnectCommand {
     public static LiteralArgumentBuilder<FabricClientCommandSource> Register(LiteralArgumentBuilder<FabricClientCommandSource> command) {
-        command.then(ClientCommandManager.literal("connect").executes(ConnectCommand::Connect)
+        command.then(ClientCommands.literal("connect").executes(ConnectCommand::Connect)
                 .then(argument("server_ip", StringArgumentType.string())
                         .then(argument("server_port", IntegerArgumentType.integer(0, 65535))
                                 .executes(ConnectCommand::ConnectWithArgs))
@@ -31,7 +30,7 @@ public class ConnectCommand {
             MainClient.irc.Disconnect("Reconnecting...");
         }
 
-        MainClient.irc = new IRCNetwork(server, serverPort, ChatUtils.getUsername(), Main.settings.backupnick(), Main.settings.verbosity());
+        MainClient.irc = new IRCNetwork(server, serverPort, ChatUtils.getUsername(), MainClient.settings.backupnick(), MainClient.settings.verbosity());
         MainClient.irc.Connect();
         return 0;
     }
